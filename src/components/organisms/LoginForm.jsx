@@ -1,16 +1,12 @@
-import { doSocialLogin } from "@/app/actions"
+import SocialLogin from "./SocialLogin"
+import CredentialsLogin from "./CredentialsLogin"
 
 const LoginForm = () => {
   return (
-    <form action={doSocialLogin}>
-      <button type="submit" name="action" value="google">
-        Sign in with Google
-      </button>
-
-      <button type="submit" name="action" value="github">
-        Sign in with Github
-      </button>
-    </form>
+    <>
+      <CredentialsLogin />
+      <SocialLogin />
+    </>
   )
 }
 
