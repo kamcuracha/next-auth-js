@@ -2,8 +2,9 @@ import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import GithubProvider from "next-auth/providers/github"
 import CredentialsProvider from "next-auth/providers/credentials"
+import bcrypt from "bcryptjs"
 
-import { getUserByEmail } from "./mock/users"
+import { User } from "./model/user"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
@@ -11,12 +12,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   providers: [
     CredentialsProvider({
+      credentials: {
+        email: {},
+        password: {},
+      },
       async authorize(credentials) {
         if (credentials === null) return null
+
         try {
-          const user = getUserByEmail(credentials?.email)
+          const user = await User.findOne({
+            email: credentials?.email
+          })
           if (user) {
-            const isMatch = user?.password === credentials?.password
+            const isMatch = await bcrypt.compare(
+              credentials.password,
+              user.password
+            )
+
             if (isMatch) {
               return user;
             } else {
